@@ -16,23 +16,38 @@ const emptyString = (str) => str.split('').every(_char => _char === ' ' || _char
 const playBtn =() => document.getElementById('play-btn');
 const textInput = () => document.getElementById('text-input');
 const appContainer = () => document.getElementById('app-container');
-const errorMessage = () => document.getElementById('error-message');
+const errorContainer = () => document.getElementById('error-message');
+const clearError = () => (errorContainer().innerHTML = "");
 
 const listenerFn = (event) => {
     if(event.target.value || event.type === 'paste')
         playBtn().disabled = false;
     else
         playBtn().disabled = true;
-}
+};
+
+const displayErrorMsg = (val) => {
+    const errs = [];
+    if(tooLong(val)) errs.push(toolLongError);
+    if(emptyString(val)) errs.push(whitespaceError);
+    errs.forEach(_err => {
+        const div = document.createElement('div');
+        div.innerText = _err;
+        errorContainer().appendChild(div);
+
+    });
+};
+
 
 playBtn().addEventListener('click', () => {
-    //clearError()
+    clearError()
 
-    if(!emptyString(textInput().value) && !tooLong(textInput().value))
-        console.log('go ahead and send');
+    if(!emptyString(textInput().value) && !tooLong(textInput().value)){
+        textInput().value = textInput().value.trim();
+        new Audio(buildUrl(textInput().value)).play();
+    }
     else
-        displayErrorMsg(textInput().value)
-
+        displayErrorMsg(textInput().value);
 });
 
 document.addEventListener('DOMContentLoaded', () => {
